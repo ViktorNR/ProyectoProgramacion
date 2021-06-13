@@ -5,17 +5,17 @@ import time
 import sys
 from pygame import mixer
 
-#  Inicializacion
+#  Inicializacion del pygame
 pygame.init()
 
 
-#Musica
+# Iniciar la musica de fonto
 musica_state = 0
 mixer.music.load('background.wav')
 mixer.music.play(musica_state)
 
 
-#FPS
+#Fotogramas por segundo
 mainClock = pygame.time.Clock()
 from pygame.locals import *
 
@@ -31,17 +31,17 @@ fondo_menu = pygame.image.load("fondo_menu.jpg")
 boton_jugar = pygame.image.load("boton_jugar.png")
 boton_salir = pygame.image.load("boton_jugar.png")
 
-# fondo
 
+# Fondo del juego
 fondo = pygame.image.load("Fondo.jpg")
 
-# Jugador
+# Variables del jugador: posicion y sprite
 imagen_jugador = pygame.image.load("battleship.png")
-jugadorX = 360
+jugadorX = 445
 jugadorY = 700
 jugadorX_cambio = 0
 
-# Enemigo
+# Variables del enemigo: cantidad maxima en un mismo momento y sprite.
 imagen_enemigo = []
 enemigoX = []
 enemigoY = []
@@ -49,6 +49,7 @@ enemigoX_cambio = []
 enemigoY_cambio = []
 numero_de_enemigos = 6
 
+#Colocar a los enemigos en partes aleatorias dentro de la pantalla
 for x in range(numero_de_enemigos):
     imagen_enemigo.append(pygame.image.load("alien 1.png"))
     enemigoX.append(random.randint(0, 800))
@@ -56,9 +57,9 @@ for x in range(numero_de_enemigos):
     enemigoX_cambio.append(0.4)
     enemigoY_cambio.append(50)
 
-# bala
-# listo no esta en la pantalla
-# fuego, esta en la pantalla
+# Bala
+# Listo no esta en la pantalla
+# Fuego, esta en la pantalla
 imagen_bala = pygame.image.load("Laser Listo.png")
 balaX = 0
 balaY = 650
@@ -66,7 +67,7 @@ balaX_cambio = 0
 balaY_cambio = 1
 estado_bala = "listo"
 
-# puntuacion
+# Poner la puntuacion en 0 cuando inicia el juego
 puntuacion_valor = 0
 font = pygame.font.Font("freesansbold.ttf", 50)
 font1 = pygame.font.Font("freesansbold.ttf", 30)
@@ -74,11 +75,11 @@ font1 = pygame.font.Font("freesansbold.ttf", 30)
 textoX = 10
 textoY = 10
 
-
+# Colocar al jugador en X, Y correspondientes 
 def jugador(x, y):
     screen.blit(imagen_jugador, (x, y))
 
-
+# Colocar a los enemigos donde corresponda
 def enemigo(x, y, i):
     screen.blit(imagen_enemigo[i], (x, y))
 
@@ -102,12 +103,11 @@ def puntuacion_pantalla(x, y):
     puntuacion = font.render("Score :" + str(puntuacion_valor), True, (255, 255, 255))
     screen.blit(puntuacion, (x, y))
 
-#Pausar el juego
+#Pausar el juego.
 def pausa():
 
     en_pausa = True    
     while en_pausa:
-        #screen.fill((0, 0, 0))
         for evento in pygame.event.get():
             if evento.type == pygame.KEYDOWN:
                 if evento.type == pygame.QUIT:
@@ -117,78 +117,87 @@ def pausa():
                     en_pausa = False
                     break
 
-# Fin del juego
-
+# Fin del juego.
 def game_over_text():
     final = font1.render("Game Over", True, (255, 255, 255))
     screen.blit(final, (400, 400))
 
- 
-# loop del juego
-
-#Menu inicial
-#Jugar
-#Opciones musica on off
 
 
-
-def draw_text(text, font, color, surface, x, y):
+# Funcion que crea un texto dado ciertas variables.
+# Reutilizable.
+def dibujar_texto(text, font, color, superficie, x, y):
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
-    surface.blit(textobj, textrect)
+    superficie.blit(textobj, textrect)
 
 
 click = False
 
 
-
+# Funcion del menu principal
 def main_menu():
     while True:
-        # screen.fill((0, 0, 0))
+        
+        # Dibujar la imagen de fondo y el texto "Space WarZone!"
         screen.blit(fondo_menu, (0, 0))
-        draw_text("Space WarZone!", font, (255, 255, 255), screen, 318, 100)
+        dibujar_texto("Space WarZone!", font, (255, 255, 255), screen, 318, 100)
 
+        # Obtener la posicion del mouse
         mx, my = pygame.mouse.get_pos()
         
-        draw_text("Juega", font1, (255, 255, 255), screen, 468, 310)
-        draw_text("Salir", font1, (255, 255, 255), screen, 475, 510) #300, 50 BOTON SIZE
-        # button_1 = pygame.Rect(415, 250, 200, 50)
-        button_1 = screen.blit(boton_jugar, (382, 200))
-        
+        # Dibujar el texto "Jugar" y "Salir" en donde corresponde
+        dibujar_texto("Juega", font1, (255, 255, 255), screen, 468, 310)
+        dibujar_texto("Salir", font1, (255, 255, 255), screen, 475, 510)
 
+        #Dibujar los botones en donde corresponde
+        button_1 = screen.blit(boton_jugar, (382, 200))     
         button_2 = screen.blit(boton_salir, (382, 400))
 
+        # Si el usuario clickea en el boton "Jugar" entonces incie el juego.
         if button_1.collidepoint((mx, my)):
             if click:
                 corriendo = True
                 return corriendo
-                break
+
+        # Si el usuario clickea en el boton "Salir" salga del programa.
         if button_2.collidepoint((mx, my)):
             if click:
                 pygame.quit()
                 sys.exit()
             
-
+        # Manejar la mecanica del "click izquirdo"
         click = False
+
+        # Si el usuario apreta la "X" de arriba a la derecha entonces salga del programa
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            
+            # Si el usuario apreta la tecla "escape" entonces salga del programa.
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+            
+            # Si el usuario hace "click izquierdo" entonces la variable "click" es igual a True.
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True
 
+        # Actualizar la pantalla cada 60 FPS.
         pygame.display.update()
         mainClock.tick(60)
 
-
+# Llamar a la funcion "main_menu".
 main_menu()
+
+# Un "flag" para poder manejar el inicio del juegl.
 flag = False
+
+# Inicie el juego.
 corriendo = True
 while corriendo:
     # Color del fondo en RGB
@@ -196,12 +205,17 @@ while corriendo:
     # Cargando el fondo
     screen.blit(fondo, (0, 0))
 
+    #Si flag es False entonces dibuje el texto "Pulse una telca para continuar".
+    if flag == False:
+        dibujar_texto("Pulse una tecla para jugar!", font, (255, 255, 255), screen, 170, 500)
 
+    # Manejar los eventos y las teclas pulsadas por el jugador
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             corriendo = False
 
         # Controles Movimiento y disparo
+        # Si el jugador a pulsado cualquier tecla, entonces inicie el movimiento de los enemigos
         if evento.type == pygame.KEYDOWN:
             flag = True
             if evento.key == pygame.K_LEFT:
@@ -215,14 +229,17 @@ while corriendo:
                     balaX = jugadorX
                     disparo_bala(balaX, balaY)
             
+            # Pause el juego si el jugador presiono la tecla "escape".
+            # Reanudar el juego si se presiona la tecla "escape" nuevamente.
             if evento.key == pygame.K_ESCAPE:
                 pausa()
 
+        # Manejar al movimiento del jugador.
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_RIGHT or evento.key == pygame.K_LEFT:
                 jugadorX_cambio = 0
 
-
+        # Manejar la pausa del juego.
         if evento.type == pygame.K_ESCAPE:
             pausa()
 
@@ -236,16 +253,17 @@ while corriendo:
     elif jugadorX >= 935:
         jugadorX = 935
 
-    # movimiento enemigo
+    # Movimiento enemigo
     for i in range(numero_de_enemigos):
 
-        # Terminar Juego
+        # Terminar el juego si el enemigo llego a la posicion (x, 600)
         if enemigoY[i] > 600:
             for j in range(numero_de_enemigos):
                 enemigoY[j] = 2000
             game_over_text()
             break
         
+        # Si flag es True entonces los enemigos se moveran
         if flag:
             enemigoX[i] += enemigoX_cambio[i]
         
@@ -256,7 +274,7 @@ while corriendo:
             enemigoX_cambio[i] = -0.9
             enemigoY[i] += enemigoY_cambio[i]
 
-        # colision entre enemigos y disparos
+        # Colision entre enemigos y disparos
         colision_entre_objetos = colision(enemigoX[i], enemigoY[i], balaX, balaY)
         if colision_entre_objetos:
             balaY = 600
@@ -279,59 +297,3 @@ while corriendo:
     jugador(jugadorX, jugadorY)
     puntuacion_pantalla(textoX, textoY)
     pygame.display.update()
-
-
-
-
-
-###########################################
-#MENU
-
-
-# pygame.init()
-# pygame.display.set_caption('game base')
-# screen = pygame.display.set_mode((500, 500), 0, 32)
-
-# font = pygame.font.SysFont(None, 20)
-
-
-
-
-
-# def game():
-#     running = True
-#     while running:
-#         screen.fill((0, 0, 0))
-
-#         draw_text('game', font, (255, 255, 255), screen, 20, 20)
-#         for event in pygame.event.get():
-#             if event.type == QUIT:
-#                 pygame.quit()
-#                 sys.exit()
-#             if event.type == KEYDOWN:
-#                 if event.key == K_ESCAPE:
-#                     running = False
-
-#         pygame.display.update()
-#         mainClock.tick(60)
-
-
-# def options():
-#     running = True
-#     while running:
-#         screen.fill((0, 0, 0))
-
-#         draw_text('options', font, (255, 255, 255), screen, 20, 20)
-#         for event in pygame.event.get():
-#             if event.type == QUIT:
-#                 pygame.quit()
-#                 sys.exit()
-#             if event.type == KEYDOWN:
-#                 if event.key == K_ESCAPE:
-#                     running = False
-
-#         pygame.display.update()
-#         mainClock.tick(60)
-
-
-# main_menu()
