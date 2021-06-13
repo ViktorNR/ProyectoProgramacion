@@ -3,4 +3,4 @@ Repositorio para el proyecto de programcion.
 
 
 ***
-### La carpeta de **Assets** es para las imagenes y sonidos.
+### Por terminar: Menu principal (Funcional)
