@@ -10,7 +10,8 @@ pygame.init()
 
 
 # Iniciar la musica de fonto
-musica_state = 0
+musica_state = -1
+musica = True
 mixer.music.load('background.wav')
 mixer.music.play(musica_state)
 
@@ -28,8 +29,12 @@ pygame.display.set_icon(icon)
 #Imagenes Menu
 fondo_menu = pygame.image.load("fondo_menu.jpg")
 
-boton_jugar = pygame.image.load("boton_jugar.png")
-boton_salir = pygame.image.load("boton_jugar.png")
+boton_jugar = pygame.image.load("boton_jugar_new.png")
+boton_opciones = pygame.image.load("boton_jugar_new.png")
+boton_salir = pygame.image.load("boton_jugar_new.png")
+boton_volver = pygame.image.load("boton_jugar_new.png")
+boton_mon = pygame.image.load("boton_jugar_new.png")
+boton_moff = pygame.image.load("boton_jugar_new.png")
 
 
 # Fondo del juego
@@ -122,7 +127,51 @@ def game_over_text():
     final = font1.render("Game Over", True, (255, 255, 255))
     screen.blit(final, (400, 400))
 
+#Menu opciones
+def menu_opciones(musica):
+    while True:
+        screen.blit(fondo_menu, (0, 0))
+        dibujar_texto("Opciones", font, (255, 255, 255), screen, 393, 100)
 
+        # Obtener la posicion del mouse
+        mx, my = pygame.mouse.get_pos()
+
+        dibujar_texto("Musica ON", font1, (255, 255, 255), screen, 285, 300)
+        dibujar_texto("Musica OFF", font1, (255, 255, 255), screen, 560, 300)
+        dibujar_texto("Volver", font1, (255, 255, 255), screen, 475, 510)
+
+        button_1 = screen.blit(boton_mon, (230, 288))     
+        button_2 = screen.blit(boton_moff, (520, 288))
+        button_3 = screen.blit(boton_volver, (388, 497))
+        
+        if button_1.collidepoint((mx, my)):
+            if click and musica == False:
+                musica = True
+                mixer.music.play(-1)
+
+        if button_2.collidepoint((mx, my)):
+            if click and musica == True:
+                musica = False
+                mixer.music.stop()
+
+        if button_3.collidepoint((mx, my)):
+            if click:
+                return musica
+        
+        click = False
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+        
+        #print(musica)
+        pygame.display.update()
+        mainClock.tick(60)
 
 # Funcion que crea un texto dado ciertas variables.
 # Reutilizable.
@@ -137,7 +186,7 @@ click = False
 
 
 # Funcion del menu principal
-def main_menu():
+def main_menu(musica):
     while True:
         
         # Dibujar la imagen de fondo y el texto "Space WarZone!"
@@ -149,11 +198,14 @@ def main_menu():
         
         # Dibujar el texto "Jugar" y "Salir" en donde corresponde
         dibujar_texto("Juega", font1, (255, 255, 255), screen, 468, 310)
+        dibujar_texto("Opciones", font1, (255, 255, 255), screen, 444, 412)
         dibujar_texto("Salir", font1, (255, 255, 255), screen, 475, 510)
+        
 
         #Dibujar los botones en donde corresponde
-        button_1 = screen.blit(boton_jugar, (382, 200))     
-        button_2 = screen.blit(boton_salir, (382, 400))
+        button_1 = screen.blit(boton_jugar, (382, 300))     
+        button_2 = screen.blit(boton_salir, (382, 500))
+        button_3 = screen.blit(boton_opciones, (382, 400))
 
         # Si el usuario clickea en el boton "Jugar" entonces incie el juego.
         if button_1.collidepoint((mx, my)):
@@ -166,6 +218,10 @@ def main_menu():
             if click:
                 pygame.quit()
                 sys.exit()
+        
+        if button_3.collidepoint((mx, my)):
+            if click:
+                musica = menu_opciones(musica)
             
         # Manejar la mecanica del "click izquirdo"
         click = False
@@ -187,14 +243,15 @@ def main_menu():
                 if event.button == 1:
                     click = True
 
+        #print(musica)
         # Actualizar la pantalla cada 60 FPS.
         pygame.display.update()
         mainClock.tick(60)
 
 # Llamar a la funcion "main_menu".
-main_menu()
+main_menu(musica)
 
-# Un "flag" para poder manejar el inicio del juegl.
+# Un "flag" para poder manejar el inicio del juego.
 flag = False
 
 # Inicie el juego.
