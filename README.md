@@ -3,4 +3,4 @@ Repositorio para el proyecto de programcion.
 
 
 ***
-### Por terminar: Menu principal (Funcional)
+### Por terminar: 2 Niveles Extra y Los Power Ups random.
