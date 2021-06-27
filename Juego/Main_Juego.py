@@ -115,12 +115,12 @@ def pausa():
     while en_pausa:
         for evento in pygame.event.get():
             if evento.type == pygame.KEYDOWN:
-                if evento.type == pygame.QUIT:
-                    en_pausa = False
-                    break
                 if evento.key == pygame.K_ESCAPE:
                     en_pausa = False
                     break
+            if evento.type == pygame.QUIT:
+                quit()
+
 
 # Fin del juego.
 def game_over_text():
