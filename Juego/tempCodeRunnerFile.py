@@ -1,1 +1,2 @@
-button_1.collidepoint((mx, my)):
+
+            estado_bala = "listo"

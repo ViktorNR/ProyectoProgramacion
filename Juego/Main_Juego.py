@@ -36,6 +36,12 @@ boton_volver = pygame.image.load("boton_jugar_new.png")
 boton_mon = pygame.image.load("boton_jugar_new.png")
 boton_moff = pygame.image.load("boton_jugar_new.png")
 
+#Bonifiaciones
+power_up_bala = pygame.image.load("pu_bala.png")
+flag1 = True
+hay_bonificador = False
+bonificacionY = 0
+bonificionY_cambio = 0.5
 
 # Fondo del juego
 fondo = pygame.image.load("Fondo.jpg")
@@ -71,6 +77,9 @@ balaY = 650
 balaX_cambio = 0
 balaY_cambio = 1
 estado_bala = "listo"
+contador_bala = []
+max_balas = 3
+bonificacion_bala = 1
 
 # Poner la puntuacion en 0 cuando inicia el juego
 puntuacion_valor = 0
@@ -181,6 +190,9 @@ def dibujar_texto(text, font, color, superficie, x, y):
     textrect.topleft = (x, y)
     superficie.blit(textobj, textrect)
 
+def bonificacion(posicionX, bonificacionY):
+    screen.blit(power_up_bala, (posicionX, bonificacionY))
+
 
 click = False
 
@@ -262,6 +274,7 @@ while corriendo:
     # Cargando el fondo
     screen.blit(fondo, (0, 0))
 
+
     #Si flag es False entonces dibuje el texto "Pulse una telca para continuar".
     if flag == False:
         dibujar_texto("Pulse una tecla para jugar!", font, (255, 255, 255), screen, 170, 500)
@@ -284,7 +297,11 @@ while corriendo:
             if evento.key == pygame.K_SPACE:
                 if estado_bala == "listo":
                     balaX = jugadorX
+                    contador_bala.append(1)
                     disparo_bala(balaX, balaY)
+                
+
+
             
             # Pause el juego si el jugador presiono la tecla "escape".
             # Reanudar el juego si se presiona la tecla "escape" nuevamente.
@@ -342,6 +359,25 @@ while corriendo:
 
         enemigo(enemigoX[i], enemigoY[i], i)
 
+
+    #Generar bonificacion de bala.
+    numero_random = random.randint(1, 10000)
+    if numero_random == 2:  #and puntuacion_valor > 100:
+        hay_bonificador = True
+    if hay_bonificador:
+        if flag1:
+            posicionX = random.randint(0, 800)
+            flag1 = False
+        bonificacionY += bonificionY_cambio
+        bonificacion(posicionX, bonificacionY)
+    if bonificacionY >= 1000:
+        flag1 = True
+        hay_bonificador = False
+        bonificacionY = 0
+
+
+
+
     # Movimiento disparos
     if balaY <= 0:
         balaY = 650
@@ -350,6 +386,8 @@ while corriendo:
     if estado_bala == "fuego":
         disparo_bala(balaX, balaY)
         balaY -= balaY_cambio
+
+
 
     jugador(jugadorX, jugadorY)
     puntuacion_pantalla(textoX, textoY)
